@@ -19,7 +19,11 @@ public:
     static uint64 read_stvec();
     static void write_stvec(uint64 stvec);
 
+    //supervisor trap value
+    static uint64 read_stval();
+    static void write_stval(uint64 stvec);
 
+    //left bitmask for clearing and setting bits in sip and status
 
     //supervisor interrupt pending
     static uint64 read_sip();
