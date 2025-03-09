@@ -1,4 +1,4 @@
-#include "../h/MemoryAllocator.hpp"
+#include "../h/memoryAllocator.hpp"
 
 MemoryAllocator* MemoryAllocator::instance = nullptr;
 
