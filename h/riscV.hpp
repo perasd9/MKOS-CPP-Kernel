@@ -5,6 +5,7 @@
 
 class RiscV {
 public:
+    static RiscV* getInstance();
     bool privilegeMode;
 
     //supervisor exception pc
@@ -23,19 +24,33 @@ public:
     static uint64 read_stval();
     static void write_stval(uint64 stvec);
 
-    //left bitmask for clearing and setting bits in sip and status
+    //setting 1. 5. and 9. bit
+    enum SipBitMask {
+        SSIP = (1 << 1),
+        STIP = (1 << 5),
+        SEIP = (1 << 9)
+    };
 
     //supervisor interrupt pending
     static uint64 read_sip();
     static void write_sip(uint64 sip);
 
+    //setting 1. 5. and 8. bit
+    enum StatusBitMask {
+        SIE = (1 << 1),
+        SPIE = (1 << 5),
+        SPP = (1 << 8)
+    };
+
     //supervisor status
     static uint64 read_sstatus();
     static void write_sstatus(uint64 sstatus);
 
-
 private:
+    static RiscV* instance;
 
+    RiscV();
+    ~RiscV();
 };
 
 #endif //RISCV_HPP
