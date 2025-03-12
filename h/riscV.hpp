@@ -35,6 +35,9 @@ public:
     static uint64 read_sip();
     static void write_sip(uint64 sip);
 
+    static void mset_sip(uint64 mask);
+    static void mclear_sip(uint64 mask);
+
     //setting 1. 5. and 8. bit
     enum StatusBitMask {
         SIE = (1 << 1),
@@ -116,6 +119,14 @@ inline uint64 RiscV::read_sip() {
 
 inline void RiscV::write_sip(uint64 sip) {
     __asm__ volatile("csrw sip, %[sipPar]" : : [sipPar] "r" (sip));
+}
+
+inline void RiscV::mset_sip(uint64 mask) {
+    __asm__ volatile("csrs sip, %[maskPar]" : : [maskPar] "r" (mask));
+}
+
+inline void RiscV::mclear_sip(uint64 mask) {
+    __asm__ volatile("csrc sip, %[maskPar]" : : [maskPar] "r" (mask));
 }
 
 //supervisor status
