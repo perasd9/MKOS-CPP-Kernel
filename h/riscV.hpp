@@ -49,6 +49,9 @@ public:
     static uint64 read_sstatus();
     static void write_sstatus(uint64 sstatus);
 
+    static void mset_sstatus(uint64 mask);
+    static void mclear_sstatus(uint64 mask);
+
 private:
     static RiscV* instance;
 
@@ -140,6 +143,14 @@ inline uint64 RiscV::read_sstatus() {
 
 inline void RiscV::write_sstatus(uint64 sstatus) {
     __asm__ volatile("csrw sstatus, %[sstatusPar]" : : [sstatusPar] "r" (sstatus));
+}
+
+inline void RiscV::mset_sstatus(uint64 mask) {
+    __asm__ volatile("csrs sstatus, %[maskPar]" : : [maskPar] "r" (mask));
+}
+
+inline void RiscV::mclear_sstatus(uint64 mask) {
+    __asm__ volatile("csrc sstatus, %[maskPar]" : : [maskPar] "r" (mask));
 }
 
 
