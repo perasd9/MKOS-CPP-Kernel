@@ -7,6 +7,10 @@ public:
 
     static MemoryAllocator* getInstance();
 
+    static void* mem_alloc(size_t size);
+    static int mem_free(void* address);
+
+
 private:
     //self-referencing instance
     static MemoryAllocator* instance;
