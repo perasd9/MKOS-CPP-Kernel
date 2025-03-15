@@ -8,6 +8,8 @@ public:
     static RiscV* getInstance();
     bool privilegeMode;
 
+    static void popS();
+
     //supervisor exception pc
     static uint64 read_sepc();
     static void write_sepc(uint64 sepc);
