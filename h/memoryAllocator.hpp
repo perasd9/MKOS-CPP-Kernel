@@ -1,15 +1,14 @@
 #ifndef MEMORYALLOCATOR_HPP
 #define MEMORYALLOCATOR_HPP
+#include "linkedList.hpp"
 
 class MemoryAllocator {
 public:
-    static void allocateMemory();
 
     static MemoryAllocator* getInstance();
 
     static void* mem_alloc(size_t size);
     static int mem_free(void* address);
-
 
 private:
     //self-referencing instance
@@ -18,6 +17,8 @@ private:
     //private constructor and destructor
     MemoryAllocator();
     ~MemoryAllocator();
+
+    LinkedList freeList;
 };
 
 #endif //MEMORYALLOCATOR_HPP
