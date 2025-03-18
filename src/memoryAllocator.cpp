@@ -18,4 +18,14 @@ MemoryAllocator* MemoryAllocator::getInstance() {
 
 void* MemoryAllocator::mem_alloc(size_t size) {
     instance = getInstance();
+
+    for (const Node* curr = instance->freeList.head; curr != nullptr; curr = curr->next) {
+        if (curr->size < size) continue;
+
+
+    }
+}
+
+int MemoryAllocator::mem_free(void *address) {
+    
 }
