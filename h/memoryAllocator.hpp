@@ -19,6 +19,7 @@ private:
     ~MemoryAllocator();
 
     LinkedList freeList;
+    LinkedList PCBList;
 };
 
 #endif //MEMORYALLOCATOR_HPP

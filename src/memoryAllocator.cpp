@@ -24,8 +24,50 @@ void* MemoryAllocator::mem_alloc(size_t size) {
 
 
     }
+
+    return nullptr;
 }
 
 int MemoryAllocator::mem_free(void *address) {
-    
+    instance = getInstance();
+
+    size_t foundSize = -1;
+    Node* previous = nullptr;
+
+    for (Node* curr = instance->PCBList.head; curr != nullptr; curr = curr->next) {
+        if ((size_t)curr + sizeof(Node) == (size_t)address) {
+            foundSize = curr->size;
+
+            if (previous == nullptr)
+                instance->PCBList.head = curr->next;
+            else
+                previous->next = curr->next;
+
+            break;
+        }
+        previous = curr;
+    }
+
+    if (foundSize == (size_t)-1) return -1;
+
+    Node* temp = nullptr;
+    if (!instance->freeList.head || (size_t)address < (size_t)instance->freeList.head)
+        temp = nullptr;
+    else
+        for (temp = instance->freeList.head; temp != nullptr && (size_t)address > (size_t)temp->next; temp = temp->next);
+
+    Node* newSeg = (Node*) address;
+    newSeg->size = foundSize;
+
+    if (temp != nullptr) {
+        newSeg->next = temp->next;
+        temp->next = newSeg;
+    } else {
+        newSeg->next = instance->freeList.head;
+        instance->freeList.head = newSeg;
+    }
+
+    //left to join segments to avoid fragmentations
+
+    return 0;
 }
