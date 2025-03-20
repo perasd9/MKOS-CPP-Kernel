@@ -7,8 +7,8 @@ public:
 
     static MemoryAllocator* getInstance();
 
-    static void* mem_alloc(size_t size);
-    static int mem_free(void* address);
+    void* mem_alloc(size_t size);
+    int mem_free(void* address);
 
 private:
     //self-referencing instance
@@ -17,6 +17,8 @@ private:
     //private constructor and destructor
     MemoryAllocator();
     ~MemoryAllocator();
+
+    static bool tryJoin(Node* memBlock);
 
     LinkedList freeList;
     LinkedList PCBList;
