@@ -11,15 +11,38 @@ MemoryAllocator* MemoryAllocator::getInstance() {
         instance->freeList.head = (Node*)((size_t)HEAP_START_ADDR + sizeof(MemoryAllocator));
         instance->freeList.head->size = (size_t)HEAP_END_ADDR - ((size_t)HEAP_START_ADDR - sizeof(MemoryAllocator));
         instance->freeList.head->next = nullptr;
+
+
+        instance->PCBList.head = nullptr;
     }
 
     return instance;
 }
 
 void* MemoryAllocator::mem_alloc(size_t size) {
-    for (const Node* curr = freeList.head; curr != nullptr; curr = curr->next) {
+    for (Node* curr = freeList.head, *previous = nullptr; curr != nullptr; previous = curr, curr = curr->next) {
         if (curr->size < size) continue;
 
+        if (curr->size - size <= sizeof(Node) + 1) {
+            if (previous != nullptr) previous->next = curr->next;
+            else freeList.head = curr->next;
+
+            curr->size = size;
+            curr->next = nullptr;
+
+            Node* PCBBlock = curr;
+
+            if (PCBList.head == nullptr)
+                PCBList.head = PCBBlock;
+            else {
+                Node* temp = PCBList.head;
+                for (; temp->next != nullptr; temp = temp->next){}
+
+                temp->next = PCBBlock;
+            }
+
+            return (void*)((size_t)curr + sizeof(Node));
+        }
 
     }
 
