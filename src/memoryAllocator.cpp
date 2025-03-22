@@ -42,6 +42,30 @@ void* MemoryAllocator::mem_alloc(size_t size) {
             }
 
             return (void*)((size_t)curr + sizeof(Node));
+        } else {
+            auto newSeg = (Node*)(curr + size + sizeof(Node));
+
+            if (previous != nullptr) previous->next = newSeg;
+            else freeList.head = newSeg;
+
+            newSeg->size = curr->size - size;
+            newSeg->next = curr->next;
+
+            curr->size = size;
+            curr->next = nullptr;
+
+            Node* PCBBlock = curr;
+
+            if (PCBList.head == nullptr)
+                PCBList.head = PCBBlock;
+            else {
+                Node* temp = PCBList.head;
+                for (; temp->next != nullptr; temp = temp->next){}
+
+                temp->next = PCBBlock;
+            }
+
+            return (void*)((size_t)curr + sizeof(Node));
         }
 
     }
