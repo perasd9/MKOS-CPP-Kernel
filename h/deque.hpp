@@ -24,6 +24,49 @@ public:
     void operator delete(void* address) {
         MemoryAllocator::getInstance()->mem_free(address);
     }
+
+    void addFirst(T *data) {
+        auto elem = (Element*)MemoryAllocator::getInstance()->mem_alloc(sizeof(Element));
+        elem->data = data;
+        elem->next = head;
+
+        head = elem;
+        if (tail == nullptr) tail = head;
+    }
+
+    void addLast(T* data) {
+        auto elem = (Element*)MemoryAllocator::getInstance()->mem_alloc(sizeof(Element));
+        elem->data = data;
+        elem->next = nullptr;
+
+        if (tail != nullptr) {
+            tail->next = elem;
+
+            tail = elem;
+        } else {
+            tail = elem;
+            head = tail;
+        }
+    }
+
+    T* removeFirst() {
+        if (head == nullptr) return nullptr;
+
+        Element* elem = head;
+
+        head = head->next;
+
+        if (head == nullptr) tail = nullptr;
+
+        T* ret = elem->data;
+        MemoryAllocator::getInstance()->mem_free(elem);
+
+        return ret;
+    }
+
+    T* peekFirst() {
+        return head == nullptr ? nullptr : head->data;
+    }
 };
 
 #endif //DEQUE_HPP
