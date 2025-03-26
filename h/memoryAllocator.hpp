@@ -2,21 +2,21 @@
 #define MEMORYALLOCATOR_HPP
 #include "linkedList.hpp"
 
-class memoryAllocator {
+class MemoryAllocator {
 public:
 
-    static memoryAllocator* getInstance();
+    static MemoryAllocator* getInstance();
 
     void* mem_alloc(size_t size);
     int mem_free(void* address);
 
 private:
     //self-referencing instance
-    static memoryAllocator* instance;
+    static MemoryAllocator* instance;
 
     //private constructor and destructor
-    memoryAllocator(){}
-    ~memoryAllocator()= default;
+    MemoryAllocator(){}
+    ~MemoryAllocator()= default;
 
     static bool tryJoin(Node* memBlock);
 

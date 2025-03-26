@@ -1,14 +1,15 @@
 #include "../h/memoryAllocator.hpp"
 #include "../lib/hw.h"
 
-memoryAllocator* memoryAllocator::instance = nullptr;
+MemoryAllocator* MemoryAllocator::instance = nullptr;
 
-memoryAllocator* memoryAllocator::getInstance() {
+
+MemoryAllocator* MemoryAllocator::getInstance() {
     if (instance == nullptr) {
-        instance = (memoryAllocator*)HEAP_START_ADDR;
+        instance = (MemoryAllocator*)HEAP_START_ADDR;
 
-        instance->freeList.head = (Node*)((size_t)HEAP_START_ADDR + sizeof(memoryAllocator));
-        instance->freeList.head->size = (size_t)HEAP_END_ADDR - ((size_t)HEAP_START_ADDR - sizeof(memoryAllocator));
+        instance->freeList.head = (Node*)((size_t)HEAP_START_ADDR + sizeof(MemoryAllocator));
+        instance->freeList.head->size = (size_t)HEAP_END_ADDR - ((size_t)HEAP_START_ADDR - sizeof(MemoryAllocator));
         instance->freeList.head->next = nullptr;
 
 
@@ -18,7 +19,7 @@ memoryAllocator* memoryAllocator::getInstance() {
     return instance;
 }
 
-void* memoryAllocator::mem_alloc(size_t size) {
+void* MemoryAllocator::mem_alloc(size_t size) {
     for (Node* curr = freeList.head, *previous = nullptr; curr != nullptr; previous = curr, curr = curr->next) {
         if (curr->size < size) continue;
 
@@ -72,7 +73,7 @@ void* memoryAllocator::mem_alloc(size_t size) {
     return nullptr;
 }
 
-bool memoryAllocator::tryJoin(Node* memBlock) {
+bool MemoryAllocator::tryJoin(Node* memBlock) {
     if (memBlock == nullptr) return false;
 
     if (memBlock->next != nullptr && (size_t)memBlock + memBlock->size == (size_t)memBlock->next) {
@@ -85,7 +86,7 @@ bool memoryAllocator::tryJoin(Node* memBlock) {
     return false;
 }
 
-int memoryAllocator::mem_free(void *address) {
+int MemoryAllocator::mem_free(void *address) {
     size_t foundSize = -1;
     Node* previous = nullptr;
 
