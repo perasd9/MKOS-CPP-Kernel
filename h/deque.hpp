@@ -67,6 +67,32 @@ public:
     T* peekFirst() {
         return head == nullptr ? nullptr : head->data;
     }
+
+    T* removeLast() {
+        if (head == nullptr) return nullptr;
+
+        Element* previous = nullptr;
+
+        for (Element* curr = head; curr != nullptr && curr != tail; curr = curr->next)
+            previous = curr;
+
+        Element* elem = tail;
+
+        if (previous != nullptr) previous->next = nullptr;
+        else head = nullptr;
+
+        tail = previous;
+
+        T* ret = elem->data;
+
+        MemoryAllocator::getInstance()->mem_free(elem);
+
+        return ret;
+    }
+
+    T* peekLast() {
+        return tail == nullptr ? nullptr : tail->data;
+    }
 };
 
 #endif //DEQUE_HPP
