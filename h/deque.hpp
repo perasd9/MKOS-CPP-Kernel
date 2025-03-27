@@ -1,6 +1,6 @@
 #ifndef DEQUE_HPP
 #define DEQUE_HPP
-#include "MemoryAllocator.hpp"
+#include "memoryAllocator.hpp"
 
 template<typename T>
 class Deque {
