@@ -8,7 +8,6 @@ public:
     static RiscV* getInstance();
     bool privilegeMode;
 
-    static void popS();
 
     //supervisor exception pc
     static uint64 read_sepc();
@@ -54,8 +53,14 @@ public:
     static void mset_sstatus(uint64 mask);
     static void mclear_sstatus(uint64 mask);
 
+
+    //interrupt call in assembly
+    static void supervisorTrap();
+
 private:
     static RiscV* instance;
+
+    static void handleSupervisorTrap();
 
     RiscV();
     ~RiscV();
