@@ -5,22 +5,22 @@
 
 uint64 lockPrint = 0;
 
-#define LOCK() while(copy_and_swap(lockPrint, 0, 1));
-#define UNLOCK() while(copy_and_swap(lockPrint, 1, 0));
+// #define LOCK() while(copy_and_swap(lockPrint, 0, 1));
+// #define UNLOCK() while(copy_and_swap(lockPrint, 1, 0));
 
 void printString(char* string) {
-    LOCK();
+    // LOCK();
 
     while(*string != '\0') {
         __putc(*string);
         string++;
     }
 
-    UNLOCK();
+    // UNLOCK();
 }
 
 char *getString(char *buf, int max) {
-    LOCK();
+    // LOCK();
     int i, cc;
     char c;
 
@@ -38,7 +38,7 @@ char *getString(char *buf, int max) {
 
     buf[i] = '\0';
 
-    UNLOCK();
+    // UNLOCK();
 
     return buf;
 }
@@ -56,7 +56,7 @@ int stringToInt(const char *string) {
 char digits[] = "0123456789ABCDEF";
 
 void printInt(int xx, int base, int sgn) {
-    LOCK();
+    // LOCK();
 
     char buf[16];
     int i, neg = 0;
@@ -80,5 +80,5 @@ void printInt(int xx, int base, int sgn) {
         __putc(buf[i]);
     }
 
-    UNLOCK();
+    // UNLOCK();
 }

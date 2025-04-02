@@ -1,7 +1,8 @@
 #ifndef SCHEDULER_HPP
 #define SCHEDULER_HPP
 #include "deque.hpp"
-#include "thread.hpp"
+
+class Thread;
 
 class Scheduler {
 private:
@@ -15,8 +16,8 @@ public:
     static Scheduler* getInstance();
 
     //ccb - coroutine control block
-    static Thread* get();
-    static void put(Thread* ccb);
+    Thread* get();
+    void put(Thread* ccb);
 };
 
 #endif //SCHEDULER_HPP
