@@ -2,10 +2,11 @@
 #include "../h/scheduler.hpp"
 
 Thread* Thread::running = nullptr;
+uint64 Thread::timeSliceCounter = 0;
 
 Thread *Thread::createThread(Body body) {
 
-    return new Thread(body, nullptr, 10, nullptr);
+    return new Thread(body, nullptr, DEFAULT_TIME_SLICE, nullptr);
 }
 
 
@@ -34,3 +35,4 @@ void Thread::dispatch() {
     //actual context switching registers between 2 active threads
     contextSwitch(&old->ctx, &running->ctx);
 }
+

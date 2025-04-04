@@ -5,7 +5,6 @@
 
 class RiscV {
 public:
-    static RiscV* getInstance();
     bool privilegeMode;
 
 
@@ -58,12 +57,7 @@ public:
     static void supervisorTrap();
 
 private:
-    static RiscV* instance;
-
     static void handleSupervisorTrap();
-
-    RiscV();
-    ~RiscV();
 };
 
 //supervisor exception pc
