@@ -8,6 +8,9 @@ public:
     bool privilegeMode;
 
 
+    //pop sstatus.spp and sstatus.spie bits
+    static void popSppSpie();
+
     //supervisor exception pc
     static uint64 read_sepc();
     static void write_sepc(uint64 sepc);
