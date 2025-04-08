@@ -48,15 +48,17 @@ public:
     };
 
 private:
+    friend class RiscV;
+
     //private constructor
-    Thread(Body body, uint64 *stack, uint64 timeSlice, void *arg)
+    explicit Thread(Body body, uint64 *stack, uint64 timeSlice, void *arg)
         : body(body),
           timeSlice(timeSlice),
           stack(body == nullptr
                     ? nullptr
                     : new uint64[DEFAULT_STACK_SIZE]),
           ctx({
-              (uint64) body,
+              (uint64) &threadWrapper,
               stack == nullptr
                   ? 0
                   : (uint64) &stack[DEFAULT_STACK_SIZE]
@@ -75,6 +77,7 @@ private:
     uint64 *stack;
     Context ctx;
     bool finished;
+    void *arg;
 
     //currently counter which represents on which timeSlice is stopped thread ex. counter is 1 and timeSlice is 2
     //it means one more period is left to the end of exeuction
@@ -83,6 +86,8 @@ private:
     static void contextSwitch(Context *oldCtx, Context *newCtx);
 
     static void dispatch();
+
+    static void threadWrapper();
 };
 
 #endif //THREAD_HPP

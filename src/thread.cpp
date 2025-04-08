@@ -36,3 +36,7 @@ void Thread::dispatch() {
     contextSwitch(&old->ctx, &running->ctx);
 }
 
+void Thread::threadWrapper() {
+    running->body(running->arg);
+    running->set_finished(true);
+}
