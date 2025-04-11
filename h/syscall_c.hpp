@@ -18,8 +18,23 @@ int thread_exit();
 
 void thread_dispatch();
 
-//semaphore syscalls c need to be filled later
+//semaphore syscalls
+class Semaphore;
+typedef Semaphore* sem_t;
 
-//console syscalls c for getc and putc need to be filled later
+int sem_open(sem_t* handle, unsigned init);
+
+int sem_close(sem_t handle);
+
+int sem_wait(sem_t id);
+
+int sem_signal(sem_t id);
+
+//console syscalls c
+const int EOF = -1;
+
+char getc();
+
+void putc(char);
 
 #endif //SYSCALL_C_HPP
