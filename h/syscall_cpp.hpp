@@ -33,4 +33,37 @@ private:
     void *arg;
 };
 
+class Semaphore {
+public:
+    Semaphore (unsigned init = 1);
+
+    virtual ~Semaphore ();
+
+    int wait ();
+
+    int signal ();
+
+    int timedWait (time_t);
+
+    int tryWait();
+
+private:
+    sem_t myHandle;
+};
+
+class PeriodicThread : public Thread {
+public:
+    void terminate ();
+
+protected:
+    PeriodicThread (time_t period);
+
+    virtual void periodicActivation () {}
+
+private:
+    time_t period;
+};
+
+//console left
+
 #endif //SYSCALL_CPP_HPP
