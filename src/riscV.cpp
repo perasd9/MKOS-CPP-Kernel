@@ -5,7 +5,11 @@
 #include "../utils/printUtils.hpp"
 
 void RiscV::popSppSpie() {
+    __asm__ volatile("csrw sepc, ra");
+    
+    //potentially mc status
 
+    __asm__ volatile("sret");
 }
 
 void RiscV::handleSupervisorTrap() {

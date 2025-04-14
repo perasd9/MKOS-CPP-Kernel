@@ -64,6 +64,12 @@ private:
     time_t period;
 };
 
-//console left
+class Console {
+public:
+    static char getc ();
+
+    static void putc (char);
+
+};
 
 #endif //SYSCALL_CPP_HPP
