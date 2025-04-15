@@ -14,7 +14,10 @@ void RiscV::popSppSpie() {
 
 void RiscV::handleSupervisorTrap() {
     uint64 scause = read_scause();
+    
+    uint64 a0;
 
+    __asm__ volatile("mv %0, a0" : "=r" (a0));
 
     if (scause == 0x8000000000000001UL) { //interrupt, cause supervisor software interrupt
 
@@ -34,6 +37,12 @@ void RiscV::handleSupervisorTrap() {
         mclear_sip(SSIP);
     } else if (scause == 0x8000000000000009UL) { //interrupt, cause supervisor external interrupt(console)
         console_handler();
+    } else if (scause == 0x0000000000000008UL || scause == 0x0000000000000009UL) {
+        //not interrupt, cause is environment call from user mode of supervisor mode
+
+        switch(){
+
+       }
     } else { //unexpected trap cause
         printInt((int)scause);
         printInt((int)read_sepc());
