@@ -12,14 +12,18 @@ Thread *Thread::createThread(Body body) {
 
 void Thread::yield() {
 
-    //need to be pushed registers on currently stack pointer of thread but i will omit that probably
+    //this is won't be finally solution but for now it works if you have assembly defined method for pushing and popping regs
+    //ecall will be called with specific code
+  
+    //push registers
+    pushRegisters();
 
-    //actually context switching
+    //dispatching context
     dispatch();
 
-    //popped registers for taking back at the return of last thread or coroutine for now
-    //coroutine is just independently control flow but that all will be thread
-    //that's the case why i named this thread
+   //popping registers
+   popRegisters();
+    
 }
 
 //currently being executed thread need to be changed with new thread from queue of ready threads
