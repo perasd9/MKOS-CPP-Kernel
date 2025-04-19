@@ -4,33 +4,22 @@
 Thread* Thread::running = nullptr;
 uint64 Thread::timeSliceCounter = 0;
 
-Thread *Thread::createThread(Body body) {
-
-    return new Thread(body, nullptr, DEFAULT_TIME_SLICE, nullptr);
-}
-
+Thread *Thread::createThread(const Body body) { return new Thread(body, nullptr, DEFAULT_TIME_SLICE, nullptr); }
 
 void Thread::yield() {
 
-    //this is won't be finally solution but for now it works if you have assembly defined method for pushing and popping regs
-    //ecall will be called with specific code
-  
-    //push registers
-    pushRegisters();
 
-    //dispatching context
-    dispatch();
+    uint64 interruptCode = 0x92;
+    __asm__ volatile("mv a0, %0" : : "r" (interruptCode));
+    __asm__ volatile("ecall");
 
-   //popping registers
-   popRegisters();
-    
 }
 
 //currently being executed thread need to be changed with new thread from queue of ready threads
 void Thread::dispatch() {
     Thread* old = running;
 
-    if (old->is_finished() == false) {
+    if (old->isFinished() == false) {
         Scheduler::getInstance()->put(old);
     }
 
@@ -42,5 +31,5 @@ void Thread::dispatch() {
 
 void Thread::threadWrapper() {
     running->body(running->arg);
-    running->set_finished(true);
+    running->setFinished(true);
 }

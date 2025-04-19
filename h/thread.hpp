@@ -11,11 +11,11 @@ public:
     }
 
     //getter and setter for 'timeSlice' field which represent period of "periods" of executing thread
-    uint64 get_time_slice() const {
+    uint64 getTimeSlice() const {
         return timeSlice;
     }
 
-    void set_time_slice(uint64 time_slice) {
+    void setTimeSlice(uint64 time_slice) {
         timeSlice = time_slice;
     }
 
@@ -26,11 +26,11 @@ public:
     static Thread *running;
 
     //getter and setter for 'finished' field which represents is thread finished
-    bool is_finished() const {
+    bool isFinished() const {
         return finished;
     }
 
-    void set_finished(const bool finished) {
+    void setFinished(const bool finished) {
         this->finished = finished;
     }
 
@@ -80,9 +80,10 @@ private:
     void *arg;
 
     //currently counter which represents on which timeSlice is stopped thread ex. counter is 1 and timeSlice is 2
-    //it means one more period is left to the end of exeuction
+    //it means one more period is left to the end of execution
     static uint64 timeSliceCounter;
 
+    ///defined in assembly file
     static void contextSwitch(Context *oldCtx, Context *newCtx);
 
     static void dispatch();
