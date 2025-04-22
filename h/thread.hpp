@@ -34,7 +34,7 @@ public:
         this->finished = finished;
     }
 
-    static Thread *createThread(Body body);
+    static Thread *createThread(Body body, void* arg);
 
     static void yield();
 
@@ -59,9 +59,7 @@ private:
                     : new uint64[DEFAULT_STACK_SIZE]),
           ctx({
               (uint64) &threadWrapper,
-              stack == nullptr
-                  ? 0
-                  : (uint64) &stack[DEFAULT_STACK_SIZE]
+              (uint64) &stack[DEFAULT_STACK_SIZE - 1]
           }),
           finished(false) {
         if (this->body != nullptr) Scheduler::getInstance()->put(this);
