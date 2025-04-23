@@ -29,23 +29,11 @@ void Thread::dispatch() {
 
     running = Scheduler::getInstance()->get();
 
-    char s[] = "HELO FROM DISPATCH \n";
-
-
-    printString(s);
-
-    printInt(old->ctx.ra);  // Ispisivanje RA iz starog konteksta
-    printInt(old->ctx.sp);  // Ispisivanje SP iz starog konteksta
-
-    printInt(running->ctx.ra);  // Ispisivanje RA iz novog konteksta
-    printInt(running->ctx.sp);  // Ispisivanje SP iz novog konteksta
-
     //actual context switching registers between 2 active threads
     contextSwitch(&old->ctx, &running->ctx);
 }
 
 void Thread::threadWrapper() {
-    char s[] = "HELO FROM WRAPPER \n"; printString(s);
     running->body(running->arg);
     running->setFinished(true);
     yield();

@@ -3,6 +3,7 @@
 
 #include "scheduler.hpp"
 #include "../lib/hw.h"
+#include "../utils/printUtils.hpp"
 
 class Thread {
 public:
@@ -54,15 +55,18 @@ private:
     explicit Thread(Body body, uint64 *stack, uint64 timeSlice, void *arg)
         : body(body),
           timeSlice(timeSlice),
-          stack(body == nullptr
-                    ? nullptr
-                    : new uint64[DEFAULT_STACK_SIZE]),
-          ctx({
-              (uint64) &threadWrapper,
-              (uint64) &stack[DEFAULT_STACK_SIZE - 1]
-          }),
+          stack(nullptr),
+          ctx({0,0}),
           finished(false) {
-        if (this->body != nullptr) Scheduler::getInstance()->put(this);
+
+        if (body != nullptr) {
+            this->stack = new uint64[DEFAULT_STACK_SIZE];
+
+            this->ctx.ra = (uint64)&threadWrapper;
+            this->ctx.sp = (uint64)&this->stack[DEFAULT_STACK_SIZE];
+
+            Scheduler::getInstance()->put(this);
+        }
     }
 
     struct Context {
