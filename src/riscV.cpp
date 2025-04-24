@@ -23,9 +23,11 @@ void RiscV::handleSupervisorTrap() {
         console_handler();
     } else if (scause == 0x0000000000000008UL || scause == 0x0000000000000009UL) {
         //not interrupt, cause is environment call from user mode of supervisor mode
+        printInt(a0);
 
-        switch(scause){
-            case 0x92:
+        switch(a0){
+            case 0x09:
+
                 uint64 sepc = read_sepc() + 4;
                 uint64 sstatus = read_sstatus();
 

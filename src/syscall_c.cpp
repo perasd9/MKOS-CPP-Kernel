@@ -1,12 +1,13 @@
 #include "../h/syscall_c.hpp"
 
+#include "../h/memoryAllocator.hpp"
+
 void* mem_alloc(size_t size) {
 
-    return nullptr;
+    return MemoryAllocator::getInstance()->mem_alloc(size);
 }
 
 int mem_free(void *ptr) {
 
-    return 0;
+    return MemoryAllocator::getInstance()->mem_free(ptr);
 }
-
