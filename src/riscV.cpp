@@ -67,6 +67,28 @@ void RiscV::handleSupervisorTrap() {
             write_sepc(sepc);
             write_sstatus(sstatus);
         }
+        else if (a0 == 0x11) { //thread_create code sys call
+            uint64 sepc = read_sepc() + 4;
+            uint64 sstatus = read_sstatus();
+
+            thread_t *arg1; //handle pointer (handle)
+            Thread::Body arg2; //start routine (start_routine)
+            uint64 arg3; //start routine arguments (arg)
+            uint64 *arg4; //stack initialized by c or cpp api
+
+            __asm__ volatile("mv %0, x11" : "=r"(arg1));
+            __asm__ volatile("mv %0, x12" : "=r"(arg2));
+            __asm__ volatile("mv %0, x13" : "=r"(arg3));
+            __asm__ volatile("mv %0, t6" : "=r"(arg4));
+
+            int statusCode = Thread::createThread(arg1, arg2, reinterpret_cast<void *>(arg3), arg4);
+
+            __asm__ volatile("sd %0, 10*8(fp)" : : "r"(statusCode));
+
+            write_sepc(sepc);
+            write_sstatus(sstatus);
+        }
+        
 
     } else {
         //unexpected trap cause
