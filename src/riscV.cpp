@@ -88,7 +88,27 @@ void RiscV::handleSupervisorTrap() {
             write_sepc(sepc);
             write_sstatus(sstatus);
         }
-        
+        else if (a0 == 0x12) { //thread_exit code sys call
+            uint64 sepc = read_sepc() + 4;
+            uint64 sstatus = read_sstatus();
+
+            Thread::running->setFinished(true);
+            Thread::dispatch();
+
+            write_sepc(sepc);
+            write_sstatus(sstatus);
+        }
+        else if (a0 == 0x13) { //thread_dispatch code sys call
+            uint64 sepc = read_sepc() + 4;
+            uint64 sstatus = read_sstatus();
+
+            Thread::dispatch();
+
+            write_sepc(sepc);
+            write_sstatus(sstatus);
+        } else {
+            printInt(a0);
+        }
 
     } else {
         //unexpected trap cause
