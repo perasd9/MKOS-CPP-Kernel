@@ -1,18 +1,38 @@
 #include "../h/thread.hpp"
+
+#include "../h/riscV.hpp"
 #include "../h/scheduler.hpp"
+#include "../h/syscall_c.hpp"
 #include "../utils/printUtils.hpp"
 
-Thread* Thread::running = nullptr;
+Thread *Thread::running = nullptr;
 uint64 Thread::timeSliceCounter = 0;
 
-Thread *Thread::createThread(const Body body, void* arg) { return new Thread(body, nullptr, DEFAULT_TIME_SLICE, arg); }
+int Thread::createThread(/* Thread** */ thread_t *handle, const Body body, void *arg, uint64 *stack) {
+    *handle = new Thread(body, DEFAULT_TIME_SLICE, arg);
+
+    (*handle)->stack = body != nullptr ? stack : nullptr;
+
+    (*handle)->ctx.sp = (*handle)->stack != nullptr
+                            ? reinterpret_cast<uint64>(&(*handle)->stack[DEFAULT_STACK_SIZE]) : 0;
+    (*handle)->ctx.ra = reinterpret_cast<uint64>(&threadWrapper);
+
+    if (*(*handle)->body != nullptr) {
+        //stack need to be initialized by c or cpp api, only then ABI will call constructor for other fields
+        // this->stack = new uint64[DEFAULT_STACK_SIZE];
+
+        Scheduler::getInstance()->put(*handle);
+    }
+
+    return *handle != nullptr ? 0 : -1;
+}
 
 void Thread::yield() {
     uint64 a0;
 
     __asm__ volatile("mv %0, a0" : "=r" (a0));
 
-    uint64 interruptCode = 0x09UL;
+    uint64 interruptCode = 0x92;
     __asm__ volatile("mv a0, %0" : : "r" (interruptCode));
     __asm__ volatile("ecall");
 
@@ -21,7 +41,7 @@ void Thread::yield() {
 
 //currently being executed thread need to be changed with new thread from queue of ready threads
 void Thread::dispatch() {
-    Thread* old = running;
+    Thread *old = running;
 
     if (old->isFinished() == false) {
         Scheduler::getInstance()->put(old);
@@ -34,6 +54,7 @@ void Thread::dispatch() {
 }
 
 void Thread::threadWrapper() {
+    // RiscV::popSppSpie();
     running->body(running->arg);
     running->setFinished(true);
     yield();

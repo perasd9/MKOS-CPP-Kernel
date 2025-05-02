@@ -9,7 +9,7 @@ MemoryAllocator* MemoryAllocator::getInstance() {
         instance = (MemoryAllocator*)HEAP_START_ADDR;
 
         instance->freeList.head = (Node*)((size_t)HEAP_START_ADDR + sizeof(MemoryAllocator));
-        instance->freeList.head->size = (size_t)HEAP_END_ADDR - ((size_t)HEAP_START_ADDR - sizeof(MemoryAllocator));
+        instance->freeList.head->size = (size_t)HEAP_END_ADDR - ((size_t)HEAP_START_ADDR + sizeof(MemoryAllocator));
         instance->freeList.head->next = nullptr;
 
 
@@ -60,7 +60,7 @@ void* MemoryAllocator::mem_alloc(size_t size) {
                 PCBList.head = PCBBlock;
             else {
                 Node* temp = PCBList.head;
-                for (; temp->next != nullptr; temp = temp->next){}
+                for (; temp->next != nullptr; temp = temp->next);
 
                 temp->next = PCBBlock;
             }
@@ -76,7 +76,7 @@ void* MemoryAllocator::mem_alloc(size_t size) {
 bool MemoryAllocator::tryJoin(Node* memBlock) {
     if (memBlock == nullptr) return false;
 
-    if (memBlock->next != nullptr && (size_t)memBlock + memBlock->size == (size_t)memBlock->next) {
+    if (memBlock->next != nullptr && (size_t)memBlock + memBlock->size + sizeof(Node) == (size_t)(memBlock->next)) {
         memBlock->size += memBlock->next->size + sizeof(Node);
         memBlock->next = memBlock->next->next;
 
@@ -124,8 +124,10 @@ int MemoryAllocator::mem_free(void *address) {
     }
 
     //join current temp segment actually previous and new segment newSeg
-    tryJoin(temp);
-    tryJoin(newSeg);
+    if (temp != nullptr && temp->next != nullptr)
+        tryJoin(temp);
+    if (newSeg != nullptr && newSeg->next != nullptr)
+        tryJoin(newSeg);
 
     return 0;
 }

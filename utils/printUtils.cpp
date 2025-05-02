@@ -55,7 +55,7 @@ int stringToInt(const char *string) {
 
 char digits[] = "0123456789ABCDEF";
 
-void printInt(int xx, int base, int sgn) {
+void printInt(uint64 xx, int base, int sgn) {
     // LOCK();
 
     char buf[16];

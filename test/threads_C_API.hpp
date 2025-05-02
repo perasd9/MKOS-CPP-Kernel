@@ -20,8 +20,8 @@ void workerBodyA(void* arg) {
     char* s;
 
     for (uint64 i = 0; i < 10; i++) {
-        s = (char*)"A: i = ";
-        printString(s); printInt(i); s = "\n"; printString(s);
+        s = (char*)"A: i=";
+        printString(s); printInt(i); s = (char*)"\n"; printString(s);
         for (uint64 j = 0; j < 10000; j++) {
             for (uint64 k = 0; k < 30000; k++) { /* busy wait */ }
             thread_dispatch();
@@ -35,8 +35,8 @@ void workerBodyA(void* arg) {
 void workerBodyB(void* arg) {
     char* s;
     for (uint64 i = 0; i < 16; i++) {
-        s = (char*)"B: i = ";
-        printString(s); printInt(i); s = "\n"; printString(s);
+        s = (char*)"B: i=";
+        printString(s); printInt(i); s = (char*)"\n"; printString(s);
         for (uint64 j = 0; j < 10000; j++) {
             for (uint64 k = 0; k < 30000; k++) { /* busy wait */ }
             thread_dispatch();
@@ -70,7 +70,7 @@ void workerBodyC(void* arg) {
         s = (char*)"C: i="; printString(s); printInt(i); s = (char*)"\n"; printString(s);
     }
 
-    s = (char*)"A finished!\n"; printString(s);
+    s = (char*)"C finished!\n"; printString(s);
     finishedC = true;
     thread_dispatch();
 }
@@ -87,6 +87,7 @@ void workerBodyD(void* arg) {
     thread_dispatch();
 
     uint64 result = fibonacci(16);
+
     s = (char*)"D: fibonaci="; printString(s); printInt(result); s = (char*)"\n"; printString(s);
 
     for (; i < 16; i++) {

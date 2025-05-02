@@ -1,5 +1,8 @@
 #include "../h/scheduler.hpp"
 
+#include "../h/thread.hpp"
+#include "../utils/printUtils.hpp"
+
 Scheduler* Scheduler::instance = nullptr;
 Deque<Thread> Scheduler::readyThreadQueue;
 

@@ -2,8 +2,8 @@
 #define THREAD_HPP
 
 #include "scheduler.hpp"
+#include "syscall_c.hpp"
 #include "../lib/hw.h"
-#include "../utils/printUtils.hpp"
 
 class Thread {
 public:
@@ -20,11 +20,6 @@ public:
         timeSlice = time_slice;
     }
 
-    //reference to the function body which will be executed by thread
-    using Body = void(*)(void *);
-
-    //currently running thread with context
-    static Thread *running;
 
     //getter and setter for 'finished' field which represents is thread finished
     bool isFinished() const {
@@ -35,9 +30,17 @@ public:
         this->finished = finished;
     }
 
-    static Thread *createThread(Body body, void* arg);
+
+    //reference to the function body which will be executed by thread
+    using Body = void(*)(void *);
+
+    //currently running thread with context
+    static Thread *running;
+
+    static int createThread(/* Thread** */ thread_t* handle, Body body, void* arg, uint64* stack);
 
     static void yield();
+
 
     //various status of thread unit
     enum Status {
@@ -50,23 +53,26 @@ public:
 
 private:
     friend class RiscV;
+    friend void thread_dispatch();
 
     //private constructor
-    explicit Thread(Body body, uint64 *stack, uint64 timeSlice, void *arg)
+    explicit Thread(const Body body, const uint64 timeSlice, void *arg)
         : body(body),
           timeSlice(timeSlice),
           stack(nullptr),
           ctx({0,0}),
-          finished(false) {
+          finished(false),
+          arg(arg) {
 
-        if (body != nullptr) {
-            this->stack = new uint64[DEFAULT_STACK_SIZE];
+        /*if (body != nullptr) {
+            //stack need to be initialized by c or cpp api, only then ABI will call constructor for other fields
+            // this->stack = new uint64[DEFAULT_STACK_SIZE];
 
-            this->ctx.ra = (uint64)&threadWrapper;
-            this->ctx.sp = (uint64)&this->stack[DEFAULT_STACK_SIZE];
+            this->ctx.ra = reinterpret_cast<uint64>(&threadWrapper);
+            this->ctx.sp = reinterpret_cast<uint64>(&this->stack[DEFAULT_STACK_SIZE]);
 
             Scheduler::getInstance()->put(this);
-        }
+        }*/
     }
 
     struct Context {
