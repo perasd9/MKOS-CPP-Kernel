@@ -1,5 +1,6 @@
 #include "../h/riscV.hpp"
 
+#include "../h/semaphore.hpp"
 #include "../h/thread.hpp"
 #include "../lib/console.h"
 #include "../utils/printUtils.hpp"
@@ -106,6 +107,79 @@ void RiscV::handleSupervisorTrap() {
 
             write_sepc(sepc);
             write_sstatus(sstatus);
+        } else if (a0 == 0x21) { //semaphore open sys call
+            uint64 sepc = read_sepc() + 4;
+            uint64 sstatus = read_sstatus();
+
+            sem_t *arg1; //handle pointer (handle)
+            unsigned arg2; //semaphore value
+
+            __asm__ volatile("mv %0, x11" : "=r"(arg1));
+            __asm__ volatile("mv %0, x12" : "=r"(arg2));
+
+            int statusCode = Semaphore::semOpen(arg1, arg2);
+
+            __asm__ volatile("sd %0, 10*8(fp)" : : "r"(statusCode));
+
+            write_sepc(sepc);
+            write_sstatus(sstatus);
+        } else if (a0 == 0x22) { //semaphore close sys call
+            uint64 sepc = read_sepc() + 4;
+            uint64 sstatus = read_sstatus();
+
+            Semaphore* arg1;
+            __asm__ volatile("mv %0, x11" : "=r"(arg1));
+
+            //closing semaphore
+            Semaphore::semClose(arg1);
+
+            //free all memory allocated
+            delete arg1;
+
+            write_sepc(sepc);
+            write_sstatus(sstatus);
+        } else if (a0 == 0x23) { //semaphore wait sys call
+            uint64 sepc = read_sepc() + 4;
+            uint64 sstatus = read_sstatus();
+
+            Semaphore* arg1;
+            __asm__ volatile("mv %0, x11" : "=r"(arg1));
+
+            int statusCode = arg1->wait();
+
+            __asm__ volatile("sd %0, 10*8(fp)" : : "r"(statusCode));
+
+            write_sepc(sepc);
+            write_sstatus(sstatus);
+        } else if (a0 == 0x24) { //semaphore signal sys call
+            uint64 sepc = read_sepc() + 4;
+            uint64 sstatus = read_sstatus();
+
+            Semaphore* arg1;
+            __asm__ volatile("mv %0, x11" : "=r"(arg1));
+
+            arg1->signal();
+
+            write_sepc(sepc);
+            write_sstatus(sstatus);
+        } else if (a0 == 0x41) { //get char sys call
+            uint64 sepc = read_sepc() + 4;
+            uint64 sstatus = read_sstatus();
+
+            char c = __getc();
+            __asm__ volatile("sd %0, 10*8(fp)" : : "r" (c));
+
+            write_sepc(sepc);
+            write_sstatus(sstatus);
+        } else if (a0 == 0x42) { //put char sys call
+            uint64 sepc = read_sepc() + 4;
+            uint64 sstatus = read_sstatus();
+
+            __asm__ volatile("mv %0, x11" : "=r" (a1));
+            __putc(a1);
+
+            write_sepc(sepc);
+            write_sstatus(sstatus);
         } else {
             printInt(a0);
         }
@@ -121,5 +195,9 @@ void RiscV::handleSupervisorTrap() {
         printInt(read_stval());
         printString(s);
     }
+
+}
+
+void RiscV::handleConsoleTrap() {
 
 }
