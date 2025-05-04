@@ -204,3 +204,13 @@ void RiscV::handleSupervisorTrap() {
 
 }
 
+void RiscV::handleConsoleTrap() {
+    uint64 scause = read_scause();
+    if (scause == 0x8000000000000009UL) {
+        console_handler();
+        mclear_sip(SEIP);
+    } else if (scause == 0x8000000000000001UL) {
+        mclear_sip(SSIP);
+    }
+
+}

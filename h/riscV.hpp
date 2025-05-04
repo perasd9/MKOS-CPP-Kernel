@@ -57,10 +57,13 @@ public:
 
 
     //interrupt call in assembly
+    //warning for not implemented in cpp file but this is implemented in assembly language in .S files
     static void supervisorTrap();
+    static void consoleTrap();
 
 private:
     static void handleSupervisorTrap();
+    static void handleConsoleTrap();
 };
 
 //supervisor exception pc
