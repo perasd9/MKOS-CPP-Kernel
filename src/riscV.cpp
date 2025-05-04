@@ -79,7 +79,7 @@ void RiscV::handleSupervisorTrap() {
 
             __asm__ volatile("mv %0, x11" : "=r"(arg1));
             __asm__ volatile("mv %0, x12" : "=r"(arg2));
-            __asm__ volatile("mv %0, x13" : "=r"(arg3));
+            __asm__ volatile("mv %0, t5" : "=r"(arg3));
             __asm__ volatile("mv %0, t6" : "=r"(arg4));
 
             int statusCode = Thread::createThread(arg1, arg2, reinterpret_cast<void *>(arg3), arg4);
@@ -166,7 +166,10 @@ void RiscV::handleSupervisorTrap() {
             uint64 sepc = read_sepc() + 4;
             uint64 sstatus = read_sstatus();
 
+            RiscV::write_stvec((uint64)&RiscV::consoleTrap);
             char c = __getc();
+            RiscV::write_stvec((uint64)&RiscV::supervisorTrap);
+
             __asm__ volatile("sd %0, 10*8(fp)" : : "r" (c));
 
             write_sepc(sepc);
@@ -176,7 +179,10 @@ void RiscV::handleSupervisorTrap() {
             uint64 sstatus = read_sstatus();
 
             __asm__ volatile("mv %0, x11" : "=r" (a1));
+
+            RiscV::write_stvec((uint64)&RiscV::consoleTrap);
             __putc(a1);
+            RiscV::write_stvec((uint64)&RiscV::supervisorTrap);
 
             write_sepc(sepc);
             write_sstatus(sstatus);
@@ -198,6 +204,3 @@ void RiscV::handleSupervisorTrap() {
 
 }
 
-void RiscV::handleConsoleTrap() {
-
-}
