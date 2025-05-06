@@ -23,17 +23,19 @@ void* MemoryAllocator::mem_alloc(size_t size) {
     for (Node* curr = freeList.head, *previous = nullptr; curr != nullptr; previous = curr, curr = curr->next) {
         if (curr->size < size) continue;
 
-        if (curr->size - size <= sizeof(Node) + 1) {
+        if (curr->size - size <= sizeof(Node)) {
             if (previous != nullptr) previous->next = curr->next;
             else freeList.head = curr->next;
 
-            curr->size = size;
-            curr->next = nullptr;
+            /*curr->size = size;
+            curr->next = nullptr;*/
 
             Node* PCBBlock = curr;
+            PCBBlock->size = size;
+            PCBBlock->next = nullptr;
 
             if (PCBList.head == nullptr)
-                PCBList.head = PCBBlock;
+                PCBList.head = curr;
             else {
                 Node* temp = PCBList.head;
                 for (; temp->next != nullptr; temp = temp->next){}
@@ -51,13 +53,15 @@ void* MemoryAllocator::mem_alloc(size_t size) {
             newSeg->size = curr->size - size;
             newSeg->next = curr->next;
 
-            curr->size = size;
-            curr->next = nullptr;
+            /*curr->size = size;
+            curr->next = nullptr;*/
 
             Node* PCBBlock = curr;
+            PCBBlock->size = size;
+            PCBBlock->next = nullptr;
 
             if (PCBList.head == nullptr)
-                PCBList.head = PCBBlock;
+                PCBList.head = curr;
             else {
                 Node* temp = PCBList.head;
                 for (; temp->next != nullptr; temp = temp->next);
@@ -110,9 +114,9 @@ int MemoryAllocator::mem_free(void *address) {
     if (!freeList.head || (size_t)address < (size_t)freeList.head)
         temp = nullptr;
     else
-        for (temp = freeList.head; temp != nullptr && (size_t)address > (size_t)temp->next; temp = temp->next){}
+        for (temp = freeList.head; temp->next != nullptr && (size_t)address > (size_t)temp->next; temp = temp->next){}
 
-    auto const newSeg = (Node*) address;
+    auto const newSeg = (Node*) ((size_t)address - sizeof(Node));
     newSeg->size = foundSize;
 
     if (temp != nullptr) {
@@ -126,8 +130,8 @@ int MemoryAllocator::mem_free(void *address) {
     //join current temp segment actually previous and new segment newSeg
     if (temp != nullptr && temp->next != nullptr)
         tryJoin(temp);
-    if (newSeg != nullptr && newSeg->next != nullptr)
-        tryJoin(newSeg);
+
+    tryJoin(newSeg);
 
     return 0;
 }
