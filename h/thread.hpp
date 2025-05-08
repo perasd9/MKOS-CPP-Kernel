@@ -11,6 +11,15 @@ public:
         delete[] stack;
     }
 
+    //various status of thread unit
+    enum Status {
+        NEW,
+        READY,
+        FINISHED,
+        BLOCKED,
+        RUNNING
+    };
+
     //getter and setter for 'timeSlice' field which represent period of "periods" of executing thread
     uint64 getTimeSlice() const {
         return timeSlice;
@@ -31,6 +40,16 @@ public:
     }
 
 
+    //getter and setter for 'status' field
+    Status getStatus() const {
+        return status;
+    }
+
+    void setStatus(Status status) {
+        this->status = status;
+    }
+
+
     //reference to the function body which will be executed by thread
     using Body = void(*)(void *);
 
@@ -41,15 +60,6 @@ public:
 
     static void yield();
 
-
-    //various status of thread unit
-    enum Status {
-        NEW,
-        READY,
-        FINISHED,
-        BLOCKED,
-        RUNNING
-    };
 
 private:
     friend class RiscV;
@@ -62,7 +72,8 @@ private:
           stack(nullptr),
           ctx({0,0}),
           finished(false),
-          arg(arg) {
+          arg(arg),
+          status(NEW){
 
         /*if (body != nullptr) {
             //stack need to be initialized by c or cpp api, only then ABI will call constructor for other fields
@@ -87,11 +98,13 @@ private:
     bool finished;
     void *arg;
 
+    Status status;
+
     //currently counter which represents on which timeSlice is stopped thread ex. counter is 1 and timeSlice is 2
     //it means one more period is left to the end of execution
     static uint64 timeSliceCounter;
 
-    ///defined in assembly file
+    //implemented in assembly language in .S file, that's warning
     static void contextSwitch(Context *oldCtx, Context *newCtx);
 
     static void dispatch();

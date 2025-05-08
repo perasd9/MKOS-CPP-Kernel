@@ -15,7 +15,7 @@ private:
 public:
     static Scheduler* getInstance();
 
-    //ccb - coroutine control block
+    //ccb - coroutine control block, but actually here threads are used
     Thread* get();
     void put(Thread* ccb);
 };

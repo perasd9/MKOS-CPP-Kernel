@@ -1,1 +1,0 @@
-# MKOS-CPP-Kernel

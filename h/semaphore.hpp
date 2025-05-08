@@ -8,12 +8,13 @@
 class Semaphore {
 public:
 
-    explicit Semaphore(uint64 init = 1) : value(init) {
+    explicit Semaphore(uint64 init = 1) : value(init) {}
 
-    }
-
-    void wait();
+    int wait();
     void signal();
+
+    static int semOpen(sem_t* handle, unsigned init);
+    static int semClose(sem_t handle);
 
     void block();
     void unblock();
@@ -23,6 +24,7 @@ public:
     }
 
 private:
+    friend class RiscV;
     int value;
     Deque<Thread> blockedThreads;
 };

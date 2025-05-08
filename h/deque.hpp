@@ -1,7 +1,11 @@
 #ifndef DEQUE_HPP
 #define DEQUE_HPP
 #include "memoryAllocator.hpp"
+#include "syscall_c.hpp"
+#include "../lib/mem.h"
 
+//this is not literally deque, this is similar but without previous pointer and that makes weaknesses
+//in comparing to the real deque, but I made mistake with naming and left this initially
 template<typename T>
 class Deque {
 private:
@@ -17,16 +21,17 @@ private:
 public:
     Deque() : head(nullptr), tail(nullptr) {}
 
-    void* operator new (const size_t size) {
+    /*void* operator new (const size_t size) {
         return MemoryAllocator::getInstance()->mem_alloc(size);
     }
 
     void operator delete(void* address) {
         MemoryAllocator::getInstance()->mem_free(address);
-    }
+    }*/
 
     void addFirst(T *data) {
-        auto elem = (Element*)MemoryAllocator::getInstance()->mem_alloc(sizeof(Element));
+        // auto elem = (Element*)MemoryAllocator::getInstance()->mem_alloc(sizeof(Element));
+        auto elem = (Element*)mem_alloc(sizeof(Element));
         elem->data = data;
         elem->next = head;
 
@@ -35,7 +40,8 @@ public:
     }
 
     void addLast(T* data) {
-        auto elem = (Element*)MemoryAllocator::getInstance()->mem_alloc(sizeof(Element));
+        // auto elem = (Element*)MemoryAllocator::getInstance()->mem_alloc(sizeof(Element));
+        auto elem = (Element*)mem_alloc(sizeof(Element));
         elem->data = data;
         elem->next = nullptr;
 
@@ -59,7 +65,8 @@ public:
         if (head == nullptr) tail = nullptr;
 
         T* ret = elem->data;
-        MemoryAllocator::getInstance()->mem_free(elem);
+        // MemoryAllocator::getInstance()->mem_free(elem);
+        mem_free(elem);
 
         return ret;
     }
@@ -85,7 +92,8 @@ public:
 
         T* ret = elem->data;
 
-        MemoryAllocator::getInstance()->mem_free(elem);
+        // MemoryAllocator::getInstance()->mem_free(elem);
+        mem_free(elem);
 
         return ret;
     }
