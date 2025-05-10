@@ -6,8 +6,9 @@ This is an implementation of a small operating system kernel that supports threa
 
 The kernel code and the hardware access modules (software below the dark thick line) execute in the privileged (system) mode of the target processor, while the layers above the kernel execute in the unprivileged (user) mode. The kernel will initially be launched in system mode.
 
-![Layers](https://github.com/user-attachments/assets/7a9e7713-889c-4dfe-b80e-1a2112ebfc6f)
-
+<div align = "center">
+    <img src = "https://github.com/user-attachments/assets/7a9e7713-889c-4dfe-b80e-1a2112ebfc6f">
+</div>
 
 - **The ABI (Application Binary Interface)** is the binary interface for system calls, which are performed using software interrupts of the target processor. This layer provides the transfer of system call arguments via processor registers, the transition to privileged processor mode, and the jump to kernel code. System call, exception, and interrupt handling should be implemented using direct mode.
 
