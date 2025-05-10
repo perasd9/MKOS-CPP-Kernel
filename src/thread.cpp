@@ -21,6 +21,7 @@ int Thread::createThread(/* Thread** */ thread_t *handle, const Body body, void 
         //stack need to be initialized by c or cpp api, only then ABI will call constructor for other fields
         // this->stack = new uint64[DEFAULT_STACK_SIZE];
 
+        (*handle)->status = READY;
         Scheduler::getInstance()->put(*handle);
     }
 
@@ -43,11 +44,13 @@ void Thread::yield() {
 void Thread::dispatch() {
     Thread *old = running;
 
-    if (old->isFinished() == false) {
+    if (old->isFinished() == false && old->status != BLOCKED) {
+        old->status = READY;
         Scheduler::getInstance()->put(old);
     }
 
     running = Scheduler::getInstance()->get();
+    running->status = RUNNING;
 
     //actual context switching registers between 2 active threads
     contextSwitch(&old->ctx, &running->ctx);
