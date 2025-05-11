@@ -61,6 +61,5 @@ void main() {
     thread_create(&t, nullptr, nullptr);
     Thread::running = t;
 
-
     userMain(nullptr);
 }

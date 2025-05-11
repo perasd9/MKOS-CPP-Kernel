@@ -4,7 +4,7 @@
 #include "../utils/printUtils.hpp"
 
 Scheduler* Scheduler::instance = nullptr;
-Deque<Thread> Scheduler::readyThreadQueue;
+Deque<Thread> Scheduler::readyThreadQueue = Deque<Thread>();
 
 Scheduler *Scheduler::getInstance() {
     if (instance == nullptr) {

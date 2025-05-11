@@ -30,7 +30,7 @@ The functions of this interface are described in the following table, and their 
 - **0x11 | int thread_create(thread_t\* handle, void(\*start_routine)(void\*), void\* arg);** Starts a thread by invoking the function `start_routine`, passing arg as its argument. On success, it writes the handle of the newly created thread to \*handle and returns 0. On failure, it returns a negative value (error code).
 - **0x12 | int thread_exit();** Terminates the current thread. On failure, it returns a negative value (error code).
 - **0x13 | void thread_dispatch();** Potentially takes the processor away from the current thread and gives it to another (or the same) thread.
-- **0x21 | int sem_open(sem_t\* handle, unsigned init);** Creates a semaphore with the initial value init. On success, it writes the handle of the newly created semaphore to \*handle and returns 0. On failure, it returns a negative value (error code).
+- **0x21 | int sem_open(sem_t\* handle, unsigned init);** Creates a semaphore with the initial value `init`. On success, it writes the handle of the newly created semaphore to \*handle and returns 0. On failure, it returns a negative value (error code).
 - **0x22 | int sem_close(sem_t handle);** Releases the semaphore with the given handle. All threads that were waiting on the semaphore are unblocked, and their wait calls return an error. On success, it returns 0; on failure, it returns a negative value (error code).
 - **0x23 | int sem_wait(sem_t id);** Performs a `wait` operation on the semaphore with the given handle. On success, it returns 0. On failure-including the case where the semaphore was deallocated while the calling thread was waiting on it, returns a negative value (error code).
 - **0x24 | int sem_signal(sem_t id);** Performs a `signal` operation on the semaphore with the given handle. On success, it returns 0; on failure, it returns a negative value (error code).
@@ -39,7 +39,7 @@ The functions of this interface are described in the following table, and their 
 
 ### CPP API
 
-The classes of this interface are defined in the file syscall_cpp.hpp.
+The classes of this interface are defined in the file `syscall_cpp.hpp`.
 
 ## Key Abstractions
 
