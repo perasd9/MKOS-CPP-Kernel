@@ -54,3 +54,36 @@ public:
         workerBodyD(nullptr);
     }
 };
+
+void WorkerA::workerBodyA(void* arg) {
+    char* s;
+
+    for (uint64 i = 0; i < 10; i++) {
+        s = (char*)"A: i=";
+        printString(s); printInt(i); s = (char*)"\n"; printString(s);
+        for (uint64 j = 0; j < 10000; j++) {
+            for (uint64 k = 0; k < 30000; k++) { /* busy wait */ }
+            thread_dispatch();
+        }
+    }
+    s = (char*)"A finished\n";
+    printString(s);
+    finishedA = true;
+}
+
+void WorkerB::workerBodyB(void* arg) {
+    char* s;
+
+    for (uint64 i = 0; i < 16; i++) {
+        s = (char*)"B: i=";
+        printString(s); printInt(i); s = (char*)"\n"; printString(s);
+        for (uint64 j = 0; j < 10000; j++) {
+            for (uint64 k = 0; k < 30000; k++) { /* busy wait */ }
+            thread_dispatch();
+        }
+    }
+
+    s = (char*)"B finished!\n"; printString(s);
+    finishedB = true;
+    thread_dispatch();
+}
