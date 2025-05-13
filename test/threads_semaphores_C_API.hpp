@@ -63,3 +63,91 @@ void workerBodyB(void* arg) {
     finishedB = true;
     thread_dispatch();
 }
+
+void workerBodyC(void* arg) {
+    char* s;
+
+    sem_wait(mutex);
+    uint8 i = 0;
+    for (; i < 3; i++) {
+        s = (char*)"C: i="; printString(s); printInt(i); s = (char*)"\n"; printString(s);
+    }
+
+    s = (char*)"C: dispatch\n"; printString(s);
+    __asm__ ("li t1, 7");
+    //thread_dispatch();
+
+    uint64 t1 = 0;
+    __asm__ ("mv %[t1], t1" : [t1] "=r"(t1));
+
+    s = (char*)"C: t1="; printString(s); printInt(t1); s = (char*)"\n"; printString(s);
+
+    /*uint64 result = fibonacci(12);
+    s = (char*)"C: fibonaci="; printString(s); printInt(result); s = (char*)"\n"; printString(s);*/
+
+    for (; i < 6; i++) {
+        s = (char*)"C: i="; printString(s); printInt(i); s = (char*)"\n"; printString(s);
+    }
+
+    s = (char*)"C finished!\n"; printString(s);
+    finishedC = true;
+    //thread_dispatch();
+}
+
+void workerBodyD(void* arg) {
+    char* s;
+
+    uint8 i = 10;
+    for (; i < 13; i++) {
+        s = (char*)"D: i="; printString(s); printInt(i); s = (char*)"\n"; printString(s);
+    }
+
+    s = (char*)"D: dispatch\n"; printString(s);
+    __asm__ ("li t1, 5");
+    //thread_dispatch();
+
+    /*   uint64 result = fibonacci(16);
+       s = (char*)"D: fibonaci="; printString(s); printInt(result); s = (char*)"\n"; printString(s);*/
+
+    for (; i < 16; i++) {
+        s = (char*)"D: i="; printString(s); printInt(i); s = (char*)"\n"; printString(s);
+    }
+
+    s = (char*)"D finished!\n"; printString(s);
+    finishedD = true;
+    //thread_dispatch();
+    sem_signal(mutex);
+}
+
+
+void threads_Sems_C_API_test() {
+    char* s;
+
+    thread_t threads[5];
+
+    createMutex();
+
+    thread_create(&threads[0], nullptr, nullptr);
+    Thread::running = threads[0];
+
+    /*thread_create(&threads[1], workerBodyA, nullptr);
+    s = (char*)"ThreadA created\n"; printString(s);
+
+    thread_create(&threads[2], workerBodyB, nullptr);
+    s = (char*)"ThreadB created\n"; printString(s);*/
+
+    thread_create(&threads[3], workerBodyC, nullptr);
+    s = (char*)"ThreadC created\n"; printString(s);
+
+    thread_create(&threads[4], workerBodyD, nullptr);
+    s = (char*)"ThreadD created\n"; printString(s);
+
+    thread_dispatch();
+
+    while (!(finishedC && finishedD)) {
+        thread_dispatch();
+    }
+
+}
+
+#endif //THREADS_SEMAPHORES_C_API_HPP
