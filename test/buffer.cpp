@@ -1,6 +1,32 @@
 #include "buffer.hpp"
 #include "../utils/printUtils.hpp"
 
+Buffer::Buffer(int _cap) : cap(_cap + 1), head(0), tail(0) {
+    buffer = (int *)mem_alloc(sizeof(int) * cap);
+    sem_open(&itemAvailable, 0);
+    sem_open(&spaceAvailable, _cap);
+    sem_open(&mutexHead, 1);
+    sem_open(&mutexTail, 1);
+}
+
+Buffer::~Buffer() {
+    char* s;
+    putc('\n');
+    s = (char*) "Buffer deleted!\n"; printString(s);
+    while (getCnt() > 0) {
+        char ch = buffer[head];
+        putc(ch);
+        head = (head + 1) % cap;
+    }
+    putc('!');
+    putc('\n');
+
+    mem_free(buffer);
+    sem_close(itemAvailable);
+    sem_close(spaceAvailable);
+    sem_close(mutexTail);
+    sem_close(mutexHead);
+}
 
 void Buffer::put(int val) {
     sem_wait(spaceAvailable);
