@@ -36,3 +36,47 @@ namespace ConsumerProducerCPP {
             td->sem->signal();
         }
     };
+
+    class Producer : public Thread {
+        thread_data *td;
+    public:
+        explicit Producer(thread_data *_td) : Thread(), td(_td) {}
+
+        void run() override {
+            int i = 0;
+            while (!threadEnd) {
+                td->buffer->put(td->id + '0');
+                i++;
+                // Thread::sleep((i+td->id)%5);
+            }
+
+            td->sem->signal();
+        }
+    };
+
+    class Consumer : public Thread {
+        thread_data *td;
+    public:
+        explicit Consumer(thread_data *_td) : Thread(), td(_td) {}
+
+        void run() override {
+            int i = 0;
+            while (!threadEnd) {
+                int key = td->buffer->get();
+                i++;
+
+                Console::putc(key);
+
+                if (i % 80 == 0) {
+                    Console::putc('\n');
+                }
+            }
+
+            while (td->buffer->getCnt() > 0) {
+                int key = td->buffer->get();
+                Console::putc(key);
+            }
+
+            td->sem->signal();
+        }
+    };
