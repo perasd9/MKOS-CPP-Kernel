@@ -80,3 +80,31 @@ namespace ConsumerProducerCPP {
             td->sem->signal();
         }
     };
+
+
+void testConsumerProducer() {
+        char* s;
+        char input[30];
+        int n, threadNum;
+
+        s = (char*)"Unesite broj proizvodjaca?\n"; printString(s);
+        getString(input, 30);
+        threadNum = stringToInt(input);
+
+        s = (char*)"Unesite velicinu bafera?\n"; printString(s);
+        getString(input, 30);
+        n = stringToInt(input);
+
+        s = (char*)"Broj proizvodjaca "; printString(s); printInt(threadNum);
+        s = (char*)" i velicina bafera "; printString(s); printInt(n);
+        s = (char*) ".\n"; printString(s);
+
+        if(threadNum > n) {
+            s = (char*) "Broj proizvodjaca ne sme biti manji od velicine bafera!\n"; printString(s);
+
+            return;
+        } else if (threadNum < 1) {
+            s = (char*) "Broj proizvodjaca mora biti veci od nula!\n"; printString(s);
+
+            return;
+        }
