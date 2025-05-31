@@ -81,8 +81,7 @@ namespace ConsumerProducerCPP {
         }
     };
 
-
-void testConsumerProducer() {
+    void testConsumerProducer() {
         char* s;
         char input[30];
         int n, threadNum;
@@ -108,3 +107,49 @@ void testConsumerProducer() {
 
             return;
         }
+
+        auto buffer = new BufferCPP(n);
+
+        waitForAll = new Semaphore(0);
+        Thread *producers[threadNum];
+        thread_data threadData[threadNum + 1];
+
+        threadData[threadNum].id = threadNum;
+        threadData[threadNum].buffer = buffer;
+        threadData[threadNum].sem = waitForAll;
+        Thread *consumer = new Consumer(&threadData[threadNum]);
+        consumer->start();
+
+        threadData[0].id = 0;
+        threadData[0].buffer = buffer;
+        threadData[0].sem = waitForAll;
+        producers[0] = new ProducerKeyborad(&threadData[0]);
+        producers[0]->start();
+
+        for (int i = 1; i < threadNum; i++) {
+            threadData[i].id = i;
+            threadData[i].buffer = buffer;
+            threadData[i].sem = waitForAll;
+
+            producers[i] = new Producer(&threadData[i]);
+            producers[i]->start();
+
+        }
+
+        Thread::dispatch();
+
+        for (int i = 0; i <= threadNum; i++) {
+            waitForAll->wait();
+        }
+
+        delete waitForAll;
+        for (int i = 0; i < threadNum; i++) {
+            delete producers[i];
+        }
+        delete consumer;
+        delete buffer;
+    }
+
+}
+
+#endif //PRODUCER_CONSUMER_CPP_API_HPP
