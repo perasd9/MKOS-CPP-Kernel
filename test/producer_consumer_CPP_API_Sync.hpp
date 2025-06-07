@@ -46,3 +46,30 @@ void ProducerKeyboard::producerKeyboard(void *arg) {
     data->wait->signal();
 }
 
+class Producer:public Thread {
+    thread_data* td;
+    void producer(void *arg);
+public:
+    Producer(thread_data* _td):Thread(), td(_td) {}
+
+    void run() override {
+        producer(td);
+    }
+};
+
+void Producer::producer(void *arg) {
+    struct thread_data *data = (struct thread_data *) arg;
+
+    int i = 0;
+    while (!threadEnd) {
+        data->buffer->put(data->id + '0');
+        i++;
+
+        if (i % (10 * data->id) == 0) {
+            Thread::dispatch();
+        }
+    }
+
+    data->wait->signal();
+}
+
