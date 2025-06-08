@@ -73,3 +73,41 @@ void Producer::producer(void *arg) {
     data->wait->signal();
 }
 
+class Consumer:public Thread {
+    thread_data* td;
+    void consumer(void *arg);
+public:
+    Consumer(thread_data* _td):Thread(), td(_td) {}
+
+    void run() override {
+        consumer(td);
+    }
+};
+
+void Consumer::consumer(void *arg) {
+    struct thread_data *data = (struct thread_data *) arg;
+
+    int i = 0;
+    while (!threadEnd) {
+        int key = data->buffer->get();
+        i++;
+
+        putc(key);
+
+        if (i % (5 * data->id) == 0) {
+            Thread::dispatch();
+        }
+
+        if (i % 80 == 0) {
+            putc('\n');
+        }
+    }
+
+
+    while (td->buffer->getCnt() > 0) {
+        int key = td->buffer->get();
+        Console::putc(key);
+    }
+
+    data->wait->signal();
+}
