@@ -111,3 +111,20 @@ void Consumer::consumer(void *arg) {
 
     data->wait->signal();
 }
+
+
+void producerConsumer_CPP_Sync_API() {
+    char* s;
+    char input[30];
+    int n, threadNum;
+
+    s = (char*)"Unesite broj proizvodjaca?\n"; printString(s);
+    getString(input, 30);
+    threadNum = stringToInt(input);
+
+    s = (char*)"Unesite velicinu bafera?\n"; printString(s);
+    getString(input, 30);
+    n = stringToInt(input);
+
+
+}
