@@ -127,4 +127,26 @@ void producerConsumer_CPP_Sync_API() {
     n = stringToInt(input);
 
 
+    s = (char*)"Broj proizvodjaca "; printString(s); printInt(threadNum);
+    s = (char*)" i velicina bafera "; printString(s); printInt(n);
+    s = (char*) ".\n"; printString(s);
+
+    if(threadNum > n) {
+        s = (char*) "Broj proizvodjaca ne sme biti manji od velicine bafera!\n"; printString(s);
+
+        return;
+    } else if (threadNum < 1) {
+        s = (char*) "Broj proizvodjaca mora biti veci od nula!\n"; printString(s);
+
+        return;
+    }
+
+    BufferCPP *buffer = new BufferCPP(n);
+
+    waitForAll = new Semaphore(0);
+
+    Thread* threads[threadNum];
+    Thread* consumerThread;
+
+
 }
