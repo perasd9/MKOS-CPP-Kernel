@@ -112,7 +112,6 @@ void Consumer::consumer(void *arg) {
     data->wait->signal();
 }
 
-
 void producerConsumer_CPP_Sync_API() {
     char* s;
     char input[30];
@@ -125,7 +124,6 @@ void producerConsumer_CPP_Sync_API() {
     s = (char*)"Unesite velicinu bafera?\n"; printString(s);
     getString(input, 30);
     n = stringToInt(input);
-
 
     s = (char*)"Broj proizvodjaca "; printString(s); printInt(threadNum);
     s = (char*)" i velicina bafera "; printString(s); printInt(n);
@@ -148,5 +146,41 @@ void producerConsumer_CPP_Sync_API() {
     Thread* threads[threadNum];
     Thread* consumerThread;
 
+    struct thread_data data[threadNum + 1];
+
+    data[threadNum].id = threadNum;
+    data[threadNum].buffer = buffer;
+    data[threadNum].wait = waitForAll;
+    consumerThread = new Consumer(data+threadNum);
+    consumerThread->start();
+
+    for (int i = 0; i < threadNum; i++) {
+        data[i].id = i;
+        data[i].buffer = buffer;
+        data[i].wait = waitForAll;
+
+        if(i>0) {
+            threads[i] = new Producer(data+i);
+        } else {
+            threads[i] = new ProducerKeyboard(data+i);
+        }
+
+        threads[i]->start();
+    }
+
+    Thread::dispatch();
+
+    for (int i = 0; i <= threadNum; i++) {
+        waitForAll->wait();
+    }
+
+    for (int i = 0; i < threadNum; i++) {
+        delete threads[i];
+    }
+    delete consumerThread;
+    delete waitForAll;
+    delete buffer;
 
 }
+
+#endif //PRODUCER_CONSUMER_CPP_API_SYNC_HPP
